@@ -62,7 +62,7 @@ taskSelect.elt.options[0].disabled = true;
   }
 // スタートボタン
   startButton = createButton("Start");
-  startButton.position(width*235/512, windowHeight/3 +20);
+  startButton.position(windowWidth*235/512, windowHeight/3 +20);
   startButton.style("border-radius", "20%");
   startButton.style("color","blue");
   startButton.style("font-weight","bold");
@@ -74,27 +74,27 @@ taskSelect.elt.options[0].disabled = true;
 
   // 一時停止ボタン（円形）
   pauseButton = createButton("Pause<br>/Restart");
-  pauseButton.position(width*320/512 , windowHeight/4);
+  pauseButton.position(windowWidth*320/512 , windowHeight/4);
   pauseButton.style("border-radius", "50%");
-  pauseButton.style("font-size","20px")
-  pauseButton.style("width","100px")
-  pauseButton.style("height","80px")
-  pauseButton.style("font-weight","bold")
-  pauseButton.style("color","red")
-  pauseButton.style("background-color","black")
+  pauseButton.style("font-size","20px");
+  pauseButton.style("width","100px");
+  pauseButton.style("height","80px");
+  pauseButton.style("font-weight","bold");
+  pauseButton.style("color","red");
+  pauseButton.style("background-color","black");
   pauseButton.hide();
  pauseButton.mousePressed(togglePause);
 
 // リセットボタン
   resetButton = createButton("Reset");   
-resetButton.position(windowWidth*3/11,windowWidthwi);
-  resetButton.style("border-radius","20%")
+resetButton.position(windowWidth*3/11,windowHeight/4);
+  resetButton.style("border-radius","20%");
   resetButton.style("font-size","30px");
-  resetButton.style("width","100")
-  resetButton.style("height","80px")
-  resetButton.style("font-weight","bold")
-  resetButton.style("color","orange")
-  resetButton.style("background-color"," black")
+  resetButton.style("width","100");
+  resetButton.style("height","80px");
+  resetButton.style("font-weight","bold");
+  resetButton.style("color","orange");
+  resetButton.style("background-color"," black");
   resetButton.hide();
   resetButton.mousePressed(resetTimer);
 }
