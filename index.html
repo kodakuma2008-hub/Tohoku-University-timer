@@ -71,6 +71,20 @@ taskSelect.elt.options[0].disabled = true;
   startButton.style("width","80px");
   startButton.style("background-color","#dda0dd");
   startButton.mousePressed(startTimer);
+
+  // 一時停止ボタン（円形）
+  pauseButton = createButton("Pause<br>/Restart");
+  pauseButton.position(width*300/512, windowHeight/4);
+  pauseButton.style("border-radius", "50%");
+  pauseButton.style("font-size","15px")
+  pauseButton.style("width","80px")
+  pauseButton.style("height","50px")
+  pauseButton.style("font-weight","bold")
+  pauseButton.style("color","red")
+  pauseButton.style("background-color","black")
+  pauseButton.hide();
+ pauseButton.mousePressed(togglePause);
+
 // リセットボタン
   resetButton = createButton("Reset");   
 resetButton.position(windowWidth*2/11, windowHeight/4);
@@ -215,7 +229,16 @@ function setTimeByTask() {
   running = true;
   paused = false;
   lastMillis = millis();
-    }
+
+  // 入力欄を消す
+  taskSelect.hide();
+  yearSelect.hide();
+  startButton.hide();
+
+  // 操作ボタンを表示
+  pauseButton.show();
+  resetButton.show();
+}
 
 function togglePause() {
   if (running) {
