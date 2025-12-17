@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>東北大学過去問タイマー</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+<body>
+<script>
+let totalTime = 0;
+let remainingTime = 0;
+let running = false;
+let paused = false;
+let lastMillis;
+
+let taskSelect, yearSelect;
+let startButton, pauseButton, resetButton;
+let taskText = "", yearText = "";
+
+let images = [];
+let currentIndex = 0;
+let lastSwitchTime = 0;
+let switchInterval = 100000; // 切り替え間隔
+
+function preload() {
+  // 背景画像を複数読み込む（Assetsにアップロードしたファイル名を指定）
+  images[0] = loadImage("画像/Tohoku.png");
+  images[1] = loadImage("画像/Tohoku2.jpeg");
+  images[2] = loadImage("画像/Tohoku3.jpeg");
+  images[2] = loadImage("画像/Tohoku4.jpeg");
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  textAlign(CENTER, CENTER);
+
+  // タスク選択
+  taskSelect = createSelect();
+  taskSelect.position(windowWidth/4, windowHeight/5);
+  // 案内文を追加
+taskSelect.option("科目を選択");
+
+// 案内文を選択状態にする
+taskSelect.selected("科目を選択");
+
+// 案内文を選択できないようにする
+taskSelect.elt.options[0].disabled = true;
+    
+  taskSelect.option("数学(理系)");
+  taskSelect.option("数学(文系・医保看)")
+  taskSelect.option("英語");
+  taskSelect.option("理科(ニ科目)");
+  taskSelect.option("理科(一科目)");
+  taskSelect.option("国語");
+  taskSelect.changed(setTimeByTask);
+
+  // 年度選択
+  yearSelect = createSelect();
+  yearSelect.position(windowWidth*330/512, windowHeight/5);
+  for (let y = 2025; y >= 1990; y--) {
+    yearSelect.option(y);
+  }
+// スタートボタン
+  startButton = createButton("Start");
+  startButton.position(width*220/512, windowHeight/3);
+  startButton.style("border-radius", "50%");
+  startButton.style("color","blue");
+  startButton.style("font-weight","bold");
+  startButton.style("font-size","18px");
+  startButton.style("height","50px");
+  startButton.style("width","80px");
+  startButton.style("background-color","#dda0dd");
+  startButton.mousePressed(startTimer);
+// リセットボタン
+  resetButton = createButton("Reset");   
+resetButton.position(windowWidth*2/11, windowHeight/4);
+  resetButton.style("border-radius","20%")
+  resetButton.style("font-size","20px");
+  resetButton.style("width","80px")
+  resetButton.style("height","50px")
+  resetButton.style("font-weight","bold")
+  resetButton.style("color","orange")
+  resetButton.style("background-color"," black")
+  resetButton.hide();
+  resetButton.mousePressed(resetTimer);
+}
+
+
+function draw() {
+  //スタート後に背景切り替え
+  if (running && millis() - lastSwitchTime > switchInterval) {
+    currentIndex = (currentIndex + 1) % images.length;
+    lastSwitchTime = millis();
+  }
+
+  let img = images[currentIndex];
+// キャンバスと画像の比率を計算
+  let canvasRatio = width / height;
+  let imgRatio = img.width / img.height;
+
+  let drawWidth, drawHeight;
+
+  if (imgRatio > canvasRatio) {
+    // 横長 → 幅をキャンバスに合わせる
+    drawWidth = width;
+    drawHeight = width / imgRatio;
+  } else {
+    // 縦長 → 高さをキャンバスに合わせる
+    drawHeight = height;
+    drawWidth = height * imgRatio;
+  }
+// 中央に配置
+  image(img, (width - drawWidth) / 2, (height - drawHeight) / 2, drawWidth, drawHeight);
+
+  // モヤをかけて刺激を弱める
+  fill(255, 255, 255, 200);
+  noStroke();
+  rect(0, 0, width, height);
+  
+// タイトル
+  textSize(35);
+  fill(0);
+  textStyle(BOLD);
+  text("東北大学 過去問タイマー", width/2, 40);
+
+  // 年度・タスク名表示（スタート後）
+  if (running || paused) {
+    textSize(24);
+    textStyle(NORMAL);
+    text(yearText + "年度 " + taskText, width/2, 90);
+  }
+// 残り時間更新
+  if (running && !paused) {
+    let now = millis();
+    let delta = (now - lastMillis) / 1000.0;
+    remainingTime -= delta;
+    lastMillis = now;
+    if (remainingTime <= 0) {
+      remainingTime = 0;
+      running = false;
+    }
+  }
+// 時間表示
+  let hours = floor(remainingTime / 3600);
+  let minutes = floor((remainingTime % 3600) / 60);
+  let seconds = floor(remainingTime % 60);
+  let timeStr = nf(hours, 2) + ":" + nf(minutes, 2) + ":" + nf(seconds, 2);
+
+  textSize(64);
+  fill(0);
+  text(timeStr, width/2, height/2);
+// 芋虫エフェクト（直線の道）
+let pathY = height / 2 + 80;
+stroke(200);
+strokeWeight(4);
+line(50, pathY, width - 50, pathY);
+
+if (totalTime > 0) {
+  let progress = map(totalTime - remainingTime, 0, totalTime, 50, width - 50);
+
+  // 芋虫の胴体（節）
+  noStroke();
+  fill(100, 255, 100);
+  ellipse(progress, pathY, 30, 20); // 頭
+  fill(80, 220, 80);
+  ellipse(progress - 20, pathY, 25, 18); // 胴体1
+  ellipse(progress - 40, pathY, 22, 16); // 胴体2
+  ellipse(progress - 60, pathY, 20, 14); // 胴体3
+
+  // 目
+  fill(255);
+  ellipse(progress - 8, pathY - 5, 6, 6);
+  ellipse(progress + 8, pathY - 5, 6, 6);
+  fill(0);
+  ellipse(progress - 8, pathY - 5, 3, 3);
+  ellipse(progress + 8, pathY - 5, 3, 3);
+
+  // 触角
+  stroke(50, 150, 50);
+  strokeWeight(2);
+  line(progress - 10, pathY - 10, progress - 15, pathY - 20);
+  line(progress + 10, pathY - 10, progress + 15, pathY - 20);
+
+  // 足のアニメーション
+  let step = sin(millis() / 200) * 3; // 上下に動く
+  stroke(50, 150, 50);
+  strokeWeight(2);
+
+  // 頭の足
+  line(progress - 10, pathY + 10, progress - 10, pathY + 15 + step);
+  line(progress + 10, pathY + 10, progress + 10, pathY + 15 - step);
+  // 胴体の足
+  line(progress - 20, pathY + 8, progress - 20, pathY + 13 - step);
+  line(progress - 40, pathY + 8, progress - 40, pathY + 13 + step);
+  line(progress - 60, pathY + 8, progress - 60, pathY + 13 - step);
+}
+}
+
+function setTimeByTask() {
+  let task = taskSelect.value();
+  if (task === "") return;
+  
+  if (task === "数学(理系)") totalTime = 150*60;
+  else if (task === "数学(文系・医保看)") totalTime = 100*60;
+  else if (task === "英語") totalTime = 100*60;
+  else if (task === "理科(ニ科目)") totalTime = 150*60;
+  else if (task === "理科(一科目)") totalTime = 75*60;
+  else if (task === "国語") totalTime = 150*60;
+  remainingTime = totalTime;
+}
+
+function togglePause() {
+  if (running) {
+    paused = !paused;
+    if (!paused) {
+      lastMillis = millis();
+    }
+  }
+}
+
+function resetTimer() {
+  running = false;
+  paused = false;
+  remainingTime = totalTime;
+  taskText = "";
+  yearText = "";
+  currentIndex = 0;
+  lastSwitchTime = millis(); // 切り替えタイマーもリセット
+
+  // 入力欄を再表示
+  taskSelect.show();
+  yearSelect.show();
+  startButton.show();
+
+  // 操作ボタンを隠す
+  pauseButton.hide();
+  resetButton.hide();
+}
+</script>
+</body>
+</html>
