@@ -208,6 +208,14 @@ function setTimeByTask() {
   else if (task === "国語") totalTime = 150*60;
   remainingTime = totalTime;
 }
+  
+  function startTimer() {
+  taskText = taskSelect.value();
+  yearText = yearSelect.value();
+  running = true;
+  paused = false;
+  lastMillis = millis();
+    }
 
 function togglePause() {
   if (running) {
