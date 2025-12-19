@@ -5,7 +5,10 @@ const urlsToCache = [
   "./sketch.js",
   "./style.css",
   "./icon.jpeg",
-  "./",
+  "./Tohoku.png",
+ "./Tohoku2.jpeg",
+ "./Tohoku3.jpeg",
+ "./Tohoku4.jpeg",
   // 画像や音声など必要なファイルを全部追加
 ];
 
