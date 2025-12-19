@@ -1,26 +1,26 @@
-const SW_VERSION = 'v10';
-var CACHE_NAME = 'Tohoku-University-timer-caches';
-var urlsToCache = [
-	'/Tohoku-University-timer/',
+ const CACHE_NAME = "tohoku-timer-cache-v1";
+const urlsToCache = [
+  "./",
+  "./index.html",
+  "./sketch.js",
+  "./style.css",
+  "./icon.jpeg",
+  "./",
+  // 画像や音声など必要なファイルを全部追加
 ];
 
-// インストール処理
-self.addEventListener('install', function(event) {
-	event.waitUntil(
-		caches
-			.open(CACHE_NAME)
-			.then(function(cache) {
-				return cache.addAll(urlsToCache);
-			})
-	);
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(urlsToCache);
+    })
+  );
 });
 
-self.addEventListener('fetch', function(event) {
-	event.respondWith(
-		caches
-			.match(event.request)
-			.then(function(response) {
-				return response ? response : fetch(event.request);
-			})
-	);
+self.addEventListener("fetch", event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
+  );
 });
