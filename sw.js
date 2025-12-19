@@ -1,7 +1,7 @@
 const SW_VERSION = 'v10';
-var CACHE_NAME = 'mukimuki-caches';
+var CACHE_NAME = 'Tohoku-University-timer-caches';
 var urlsToCache = [
-	'/mukimuki/',
+	'/Tohoku-University-timer/',
 ];
 
 // インストール処理
