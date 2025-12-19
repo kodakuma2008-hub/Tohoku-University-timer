@@ -2,7 +2,6 @@
 const urlsToCache = [
   "./",
   "./index.html",
-  "./sketch.js",
   "./style.css",
   "./icon.jpeg",
   "./Tohoku.png",
